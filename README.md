@@ -5,7 +5,7 @@ See live demo (with jQuery): [Attach Bot](https://t.me/asmico_attach_bot).
 
 ## Links
 * Official docs: https://core.telegram.org/bots/webapps
-* Live Demo Bot: [Attach Bot](https://t.me/asmico_attach_bot)
+* Live Demo Bot: [Attach Bot](https://t.me/asmico_attach_boat)
 * Telegram Promo Bot: [Durger King](https://t.me/durgerkingbot)
 
 ## Quick setup
