@@ -1,106 +1,143 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <script src="https://telegram.org/js/telegram-web-app.js?2"></script>
-    <script>
-        function setThemeClass() {
-            document.documentElement.className = Telegram.WebApp.colorScheme;
-        }
-        Telegram.WebApp.onEvent('themeChanged', setThemeClass);
-        setThemeClass();
-    </script>
-    <title>Tmwelx Store</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tmwelx Pro Store</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --tg-theme-bg-color: #f4f7f9;
+            --primary-color: #0088cc;
+            --accent-color: #00c853;
+            --text-color: #222;
+        }
+
         body {
-            --bg-color: var(--tg-theme-bg-color, #fff);
-            font-family: sans-serif;
-            background-color: var(--bg-color);
-            color: var(--tg-theme-text-color, #222);
-            margin: 0; padding: 0;
-            color-scheme: var(--tg-color-scheme);
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--tg-theme-bg-color);
+            margin: 0;
+            padding: 15px;
+            color: var(--text-color);
         }
-        .container { padding: 20px; text-align: center; }
-        .service-card {
-            background-color: var(--tg-theme-secondary-bg-color, #efefef);
-            border: 2px solid transparent;
-            border-radius: 12px;
-            padding: 18px;
-            margin: 12px 0;
-            cursor: pointer;
-            transition: all 0.3s ease;
+
+        .header {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin: 0;
+            color: var(--primary-color);
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
+            transition: transform 0.2s;
+            border: 1px solid rgba(0,0,0,0.05);
         }
-        .service-card.selected { 
-            border-color: var(--tg-theme-button-color, #50a8eb);
-            transform: scale(1.02);
+
+        .card:active {
+            transform: scale(0.95);
         }
-        .price-tag { color: #28a745; font-weight: bold; font-size: 1.1em; }
-        .service-info { text-align: right; }
-        h2 { margin-bottom: 5px; color: var(--tg-theme-button-color); }
-        .hint { color: var(--tg-theme-hint-color); font-size: 0.9em; margin-bottom: 20px; }
+
+        .card img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 10px;
+        }
+
+        .card h3 {
+            font-size: 14px;
+            margin: 5px 0;
+            text-align: center;
+        }
+
+        .card .price {
+            color: var(--accent-color);
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: auto;
+        }
+
+        .buy-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-top: 10px;
+            width: 100%;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* تنسيق خاص للعمل بمظهر تليجرام */
+        body.dark {
+            --tg-theme-bg-color: #18222d;
+            --text-color: #ffffff;
+        }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <h2>💎 متجر Tmwelx</h2>
-    <p class="hint">اختر الخدمة المطلوبة واضغط على الزر الأزرق بالأسفل</p>
-
-    <div id="services">
-        <div class="service-card" onclick="selectTmwelx('1000 مشترك عربي', 500, this)">
-            <span class="price-tag">500 Star</span>
-            <div class="service-info">
-                <b>🚀 تمويل 1000 مشترك</b>
-            </div>
-        </div>
-        <div class="service-card" onclick="selectTmwelx('5000 مشترك حقيقي', 2000, this)">
-            <span class="price-tag">2000 Star</span>
-            <div class="service-info">
-                <b>🔥 تمويل 5000 مشترك</b>
-            </div>
-        </div>
-        <div class="service-card" onclick="selectTmwelx('تصميم لوجو احترافي', 300, this)">
-            <span class="price-tag">300 Star</span>
-            <div class="service-info">
-                <b>🎨 تصميم شعار (Logo)</b>
-            </div>
-        </div>
+    <div class="header">
+        <h1>متجر Tmwelx 💎</h1>
+        <p>خدمات حصرية بأفضل الأسعار</p>
     </div>
-</div>
 
-<script type="application/javascript">
-    const tg = Telegram.WebApp;
-    tg.ready();
-    tg.expand();
+    <div class="services-grid">
+        <!-- سيتم إضافة الخدمات تلقائياً هنا -->
+    </div>
 
-    let selectedService = "";
-    let selectedPrice = 0;
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
 
-    function selectTmwelx(name, price, el) {
-        document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
-        el.classList.add('selected');
-        
-        selectedService = name;
-        selectedPrice = price;
+        const services = [
+            { id: 1, name: "1000 مشترك عربي", price: 500, img: "https://cdn-icons-png.flaticon.com/512/3536/3536661.png" },
+            { id: 2, name: "5000 مشاهدة تليجرام", price: 50, img: "https://cdn-icons-png.flaticon.com/512/159/159604.png" },
+            { id: 3, name: "1000 لايك إنستقرام", price: 200, img: "https://cdn-icons-png.flaticon.com/512/174/174855.png" },
+            { id: 4, name: "تمويل أعضاء حقيقيين", price: 1200, img: "https://cdn-icons-png.flaticon.com/512/3062/3062634.png" }
+        ];
 
-        tg.MainButton.setText("شراء " + name + " بـ " + price + " نجمة");
-        tg.MainButton.show();
-        tg.HapticFeedback.impactOccurred('heavy');
-    }
+        const grid = document.querySelector('.services-grid');
 
-    tg.MainButton.onClick(function() {
-        const orderData = {
-            service: selectedService,
-            price: selectedPrice
-        };
-        // إرسال البيانات كـ JSON
-        tg.sendData(JSON.stringify(orderData)); 
-        tg.close();
-    });
-</script>
+        services.forEach(service => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <img src="${service.img}" alt="${service.name}">
+                <h3>${service.name}</h3>
+                <div class="price">${service.price} نجمة</div>
+                <button class="buy-btn" onclick="orderService('${service.name}', ${service.price})">طلب الآن</button>
+            `;
+            grid.appendChild(card);
+        });
+
+        function orderService(name, price) {
+            const data = JSON.stringify({ service: name, price: price });
+            tg.sendData(data);
+        }
+    </script>
 </body>
 </html>
