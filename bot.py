@@ -1,28 +1,56 @@
 import telebot
+from telebot import types
+import json
+from datetime import datetime
 
-# بياناتك الصحيحة
+# بياناتك
 API_TOKEN = '7071617327:AAGy2Z5ljCj691lJXdYVWf6trSEWNhd0qsc'
 ADMIN_ID = '1995454152'
 
 bot = telebot.TeleBot(API_TOKEN)
 
-@bot.message_handler(commands=['start'])
-def start(message):
-    # استخدام الرابط المباشر الخاص بك
-    markup = telebot.types.InlineKeyboardMarkup()
-    web_app = telebot.types.WebAppInfo(url="https://k10k100.github.io/telegram-web-app-bot-example/")
-    markup.add(telebot.types.InlineKeyboardButton("فتح متجر Tmwelx 💎", web_app=web_app))
-    
-    bot.send_message(message.chat.id, "مرحباً بك في متجر تمويلكس!\nاضغط على الزر بالأسفل لبدء التسوق:", reply_markup=markup)
+# دالة مطورة لحفظ الطلبات بشكل منظم
+def save_order(user_id, username, service_name, price):
+    order = {
+        "user_id": user_id,
+        "username": username,
+        "service": service_name,
+        "price": price,
+        "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    }
+    with open("orders.json", "a", encoding="utf-8") as f:
+        f.write(json.dumps(order, ensure_ascii=False) + "\n")
 
 @bot.message_handler(content_types=['web_app_data'])
 def handle_data(message):
-    # استلام الطلب من المتجر
-    order_details = message.web_app_data.data
-    bot.send_message(message.chat.id, f"✅ تم استلام طلبك: {order_details}")
-    
-    # إرسال إشعار لك كمسؤول (ADMIN)
-    bot.send_message(ADMIN_ID, f"🔔 طلب جديد وصل!\nالطلب: {order_details}\nمن المستخدم: @{message.from_user.username}")
+    try:
+        # محاولة قراءة البيانات كـ JSON
+        data = json.loads(message.web_app_data.data)
+        name = data.get('service', 'خدمة مجهولة')
+        price = int(data.get('price', 0))
 
-print("Bot is running...")
+        bot.send_invoice(
+            message.chat.id,
+            title="طلب Tmwelx",
+            description=f"تجهيز: {name}",
+            invoice_payload="pay_payload",
+            provider_token="", 
+            currency="XTR",
+            prices=[telebot.types.LabeledPrice(label=name, amount=price)]
+        )
+        save_order(message.from_user.id, message.from_user.username, name, price)
+    except json.JSONDecodeError:
+        # في حال كان المتجر لا يزال يرسل نصاً قديماً
+        bot.send_message(message.chat.id, "يرجى تحديث المتجر (إغلاقه وفتحه) لإرسال الطلب بشكل صحيح.")
+# الخطوات الضرورية لإتمام الدفع
+@bot.pre_checkout_query_handler(func=lambda query: True)
+def checkout(pre_checkout_query):
+    bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
+
+@bot.message_handler(content_types=['successful_payment'])
+def got_payment(message):
+    bot.send_message(message.chat.id, "🎉 تم استلام النجوم بنجاح! جارٍ تنفيذ طلبك.")
+    bot.send_message(ADMIN_ID, f"💰 عملية دفع ناجحة من @{message.from_user.username} للخدمة: {message.successful_payment.invoice_payload}")
+
+print("البوت يعمل بنظام النجوم والـ JSON المطور...")
 bot.infinity_polling()
