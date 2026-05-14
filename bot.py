@@ -54,3 +54,17 @@ def got_payment(message):
 
 print("البوت يعمل بنظام النجوم والـ JSON المطور...")
 bot.infinity_polling()
+@bot.message_handler(commands=['test_stars'])
+def test_invoice(message):
+    try:
+        bot.send_invoice(
+            message.chat.id,
+            title="تجربة النجوم",
+            description="فاتورة تجريبية لتنشيط الميزة",
+            invoice_payload="test_payload",
+            provider_token="", # اتركها فارغة للنجوم
+            currency="XTR",
+            prices=[types.LabeledPrice(label="نجمة واحدة", amount=1)]
+        )
+    except Exception as e:
+        print(f"خطأ التنشيط: {e}")
