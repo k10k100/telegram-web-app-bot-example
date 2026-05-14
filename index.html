@@ -46,48 +46,60 @@
 </head>
 <body>
 
-<div class="container">
-    <h2>💎 متجر Tmwelx</h2>
-    <p class="hint">اختر الخدمة المطلوبة واضغط على الزر الأزرق بالأسفل</p>
-
-    <div id="services">
-        <div class="service-card" onclick="selectTmwelx('1000 مشترك عربي', this)">
-            <span class="price-tag">500 Star</span>
-            <div class="service-info">
-                <b>🚀 تمويل 1000 مشترك</b>
-            </div>
+<<div id="services">
+    <div class="service-card" onclick="selectTmwelx('1000 مشترك عربي', 500, this)">
+        <span class="price-tag">500 Star</span>
+        <div class="service-info">
+            <b>🚀 تمويل 1000 مشترك</b>
         </div>
-        <div class="service-card" onclick="selectTmwelx('5000 مشترك حقيقي', this)">
-            <span class="price-tag">2000 Star</span>
-            <div class="service-info">
-                <b>🔥 تمويل 5000 مشترك</b>
-            </div>
+    </div>
+    <div class="service-card" onclick="selectTmwelx('5000 مشترك حقيقي', 2000, this)">
+        <span class="price-tag">2000 Star</span>
+        <div class="service-info">
+            <b>🔥 تمويل 5000 مشترك</b>
+        </div>
+    </div>
+    <div class="service-card" onclick="selectTmwelx('تصميم لوجو احترافي', 300, this)">
+        <span class="price-tag">300 Star</span>
+        <div class="service-info">
+            <b>🎨 تصميم شعار (Logo)</b>
         </div>
     </div>
 </div>
 
-<script type="application/javascript">
+<<script type="application/javascript">
     const tg = Telegram.WebApp;
     tg.ready();
-    tg.expand(); // لفتح المتجر بكامل الشاشة فوراً
+    tg.expand();
 
-    function selectTmwelx(name, el) {
-        // إزالة التحديد السابق
+    let selectedService = "";
+    let selectedPrice = 0;
+
+    function selectTmwelx(name, price, el) {
+        // تحديد البطاقة المختارة
         document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
         el.classList.add('selected');
         
-        // إظهار الزر الرئيسي وتعديل نصه
-        tg.MainButton.setText("تأكيد طلب: " + name);
+        // حفظ البيانات المختارة
+        selectedService = name;
+        selectedPrice = price;
+
+        // تحديث الزر الرئيسي
+        tg.MainButton.setText("شراء " + name + " بـ " + price + " نجمة");
         tg.MainButton.show();
-        tg.HapticFeedback.impactOccurred('medium');
+        tg.HapticFeedback.impactOccurred('heavy'); // اهتزاز أقوى للتأكيد
     }
 
-    // أهم جزء: إرسال البيانات للبوت
     tg.MainButton.onClick(function() {
-        if (tg.MainButton.text.includes("تأكيد")) {
-            tg.sendData(tg.MainButton.text); // إرسال النص للبوت
-            tg.close(); // غلق الـ WebApp
-        }
+        // تجهيز البيانات ككائن JSON ليفهمها البوت بدقة
+        const orderData = {
+            service: selectedService,
+            price: selectedPrice
+        };
+        
+        // تحويل الكائن إلى نص JSON وإرساله
+        tg.sendData(JSON.stringify(orderData)); 
+        tg.close();
     });
 </script>
 </body>
